@@ -1,6 +1,8 @@
 #include "json_parser.hpp"
+#include "query_lexer.hpp"
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace gvault;
 
@@ -59,8 +61,35 @@ void print_value(const JsonValue& value, int indent = 0) {
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <json_file>" << std::endl;
+        std::cerr << "Usage:\n"
+                  << "  " << argv[0] << " <json_file>                Parse and display a JSON file\n"
+                  << "  " << argv[0] << " --tokens \"<query>\"         Tokenize and display a QQL query\n";
         return 1;
+    }
+
+    std::string arg1 = argv[1];
+
+    if (arg1 == "--tokens") {
+        if (argc < 3) {
+            std::cerr << "Error: --tokens requires a query string argument.\n"
+                      << "Example: " << argv[0] << " --tokens \"SELECT name WHERE age > 20\"\n";
+            return 1;
+        }
+        std::string query = argv[2];
+        try {
+            qvault::QueryLexer lexer(query);
+            auto tokens = lexer.tokenize();
+            std::cout << "Tokens (" << tokens.size() << " total):\n";
+            for (const auto& token : tokens) {
+                std::cout << "  " << token.to_string() << "\n";
+            }
+            return 0;
+        } catch (const qvault::LexerException& e) {
+            std::cerr << "Lexer error at line " << e.line() 
+                      << ", column " << e.column() << ": " 
+                      << e.what() << "\n";
+            return 1;
+        }
     }
     
     try {

@@ -7,32 +7,39 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-# Phase 1: JSON Parser Library
-add_library(json_parser 
+# Core Engine Library (JSON Parser + Query Compiler)
+add_library(qvault_core 
     src/common.cpp
     src/json_parser.cpp
-    include/json_parser.hpp
+    src/query_lexer.cpp
     include/common.hpp
+    include/json_parser.hpp
+    include/query_lexer.hpp
 )
-target_include_directories(json_parser PUBLIC include)
+target_include_directories(qvault_core PUBLIC include)
 
-# Phase 1: CPU Parser Executable
+# Main Executable
 add_executable(q_vault
     src/main.cpp
 )
-target_link_libraries(q_vault PRIVATE json_parser)
+target_link_libraries(q_vault PRIVATE qvault_core)
 
-# Phase 1: CPU Parser Tests
+# Tests
 add_executable(test_parser
     tests/test_cpu_parser.cpp
 )
-target_link_libraries(test_parser PRIVATE json_parser)
+target_link_libraries(test_parser PRIVATE qvault_core)
+
+add_executable(test_lexer
+    tests/test_lexer.cpp
+)
+target_link_libraries(test_lexer PRIVATE qvault_core)
 
 # Compiler flags
 if(MSVC)
-    target_compile_options(json_parser PRIVATE /W4)
+    target_compile_options(qvault_core PRIVATE /W4)
     target_compile_options(q_vault PRIVATE /W4)
 else()
-    target_compile_options(json_parser PRIVATE -Wall -Wextra -Wpedantic)
+    target_compile_options(qvault_core PRIVATE -Wall -Wextra -Wpedantic)
     target_compile_options(q_vault PRIVATE -Wall -Wextra -Wpedantic)
 endif()

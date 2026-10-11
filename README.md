@@ -7,7 +7,8 @@ Q-Vault is a high-performance, CPU-only JSON query engine built to experiment wi
 What is already working (and what is next):
 
 - [x] Baseline JSON Lexer and Recursive Descent Parser
-- [ ] Custom Query Language (QQL) Lexer and Parser
+- [x] Custom Query Language (QQL) Lexer
+- [ ] Custom Query Language (QQL) Parser
 - [ ] Semantic analysis and type checking for queries
 - [ ] Intermediate Representation (IR) generation
 - [ ] Optimization passes (Constant folding, Predicate reordering)
